@@ -6,12 +6,38 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   body { font-family: -apple-system, sans-serif; max-width: 640px; margin: 4rem auto; padding: 0 1.5rem; color: #222; line-height: 1.6; }
+  textarea { width: 100%; box-sizing: border-box; font-family: ui-monospace, monospace; font-size: 0.85rem; padding: 0.75rem; }
+  button { margin-top: 0.5rem; padding: 0.5rem 1rem; font-size: 0.95rem; cursor: pointer; }
+  .hint { color: #555; font-size: 0.9rem; }
 </style>
 </head>
 <body>
 <h1>Connect / Reconnect</h1>
-<p>This tool is connected via the OAuth flow run from the owner's own
-machine. There is nothing to configure here.</p>
+<div id="result"></div>
+<div id="default">
+  <p>This is the OAuth redirect target for QBO Personal Bridge. If you were
+  sent here by Intuit's authorization screen but see no code below, the
+  authorization may have failed — check the terminal that started
+  <code>npm run qbo:auth</code>.</p>
+</div>
 <p><a href="index.html">Back</a></p>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get("code");
+  if (code) {
+    document.getElementById("default").style.display = "none";
+    const full = window.location.href;
+    document.getElementById("result").innerHTML =
+      '<p><strong>Authorization received.</strong> Copy the full URL below and paste it back into the terminal running <code>npm run qbo:auth</code>:</p>' +
+      '<textarea id="url" rows="4" readonly></textarea>' +
+      '<br><button id="copyBtn">Copy URL</button>' +
+      '<p class="hint">You can close this tab once you have pasted it into the terminal.</p>';
+    document.getElementById("url").value = full;
+    document.getElementById("copyBtn").addEventListener("click", () => {
+      navigator.clipboard.writeText(full);
+      document.getElementById("copyBtn").textContent = "Copied!";
+    });
+  }
+</script>
 </body>
 </html>
